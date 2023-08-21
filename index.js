@@ -21,9 +21,10 @@ let gameBoard = (function () {
 })();
 
 //will prompt player for their name...later...ui to change it.
-const Player = (name = 'Player One') => {
-    let value = 1; //later an x
-
+const Player = (name, value) => {
+    const getName = () => { name };
+    const getValue = () => { value };
+    return { getName, getValue }
 }
 
 

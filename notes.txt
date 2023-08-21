@@ -1,0 +1,35 @@
+goals: 
+use as little global code as possible.
+separate state logic from the UI controls.
+build the game so that it can be played, in full, in the console
+
+
+
+gameboard prop inside of gameBoard object.
+function that will render the contents of the gameboard array to the webpage. 
+object to control the flow of the game itself.
+gameBoard, and displayController - use a module
+players objs - use factory functions
+
+questions and concerns: 
+    using a module instead of a factory function.
+
+
+
+use 1 for x and 0 for o for each cell.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//Dom elements and queries should not be responsible for storing or handling the implementation details of how our application works.
+The DOM should be responsible for reading and displaying the application state to the user and providing an easy-to-use gateway to interact with the methods it needs to. 

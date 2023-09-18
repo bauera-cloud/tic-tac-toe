@@ -3,33 +3,28 @@ use as little global code as possible.
 separate state logic from the UI controls.
 build the game so that it can be played, in full, in the console
 
+overall plan: finish console game. create the webpage for the DOM game. Add UI controls.
 
-
-gameboard prop inside of gameBoard object.
-function that will render the contents of the gameboard array to the webpage. 
-object to control the flow of the game itself.
-gameBoard, and displayController - use a module
-players objs - use factory functions
-
-questions and concerns: 
-    using a module instead of a factory function.
-
-
-
-use 1 for x and 0 for o for each cell.
-
-
+plan for today: reread Git body suggestion. commit each step. 
+put every variable in their own factory function
+console game should have an invalid input error message $
+console game should allow to play against a player2
+console game should not allow for player(s) to make a move on an occupied location $
+console game should check for 3 in a row 
+console game should congratulate the winning player
+console game should check for a tie
+console game should announce a tie
+console game should have way to restart the game
+extra credit: console game: add computer ai.
 
 
 
+start the game by selecting a position for P1's token
+P1 will always be X. P2 and CPU will always be O
+make the game start against the easy computer. easy = random. medium = ai.
+players and computer stored inside factory function
+DOM - click CPU to change to P2
+may use inheritance from factory functions.
 
-
-
-
-
-
-
-
-
-//Dom elements and queries should not be responsible for storing or handling the implementation details of how our application works.
+Dom elements and queries should not be responsible for storing or handling the implementation details of how our application works.
 The DOM should be responsible for reading and displaying the application state to the user and providing an easy-to-use gateway to interact with the methods it needs to. 

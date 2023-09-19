@@ -35,7 +35,7 @@ function consoleLogNewBoard(fakeBoard) {
 }
 
 //expected typeof number (1, 3) for ex. number represents the row not the index.
-function coordinatesForChoice(row, column) {
+function coordinatesForTokenPlacement(row, column) {
     fakeBoard[row - 1][column - 1] = 'X';
 }
 
@@ -48,47 +48,37 @@ function opponentsTurn() {
     }
     fakeBoard[coordinate1][coordinate2] = 'O';
     consoleLogNewBoard(fakeBoard)
+    if (checkWhoWon(fakeBoard) === 'CPU') {
+        console.log('CPU WON')
+        return
+    }
 }
 
 //asks for expected string '1 3'.turns each into their own number placed into their respective variables. puts an "X" into coordinates. Shows new board.
 function playRound() {
+    let winner;
     let tokenPlacement = prompt('Separated by a space, enter the row, then column for your token placement');
+    while (isInvalidInput(tokenPlacement) || fakeBoard[tokenPlacement[Number(0)] - 1][tokenPlacement[Number(2)] - 1] !== ' ') {
+        if (isInvalidInput(tokenPlacement)) {
+            tokenPlacement = prompt('Invalid input. Separated by a space, enter the row, then column for your token placement')
+        } else if (fakeBoard[tokenPlacement[Number(0)] - 1][tokenPlacement[Number(2)] - 1] !== ' ') {
+            tokenPlacement = prompt('Sorry, location is occupied. Choose another location.')
+        }
+    }
     let [row, column] = tokenPlacement.split(' ').map(Number)
-    coordinatesForChoice(row, column)
+    coordinatesForTokenPlacement(row, column)
     consoleLogNewBoard(fakeBoard)
+    winner = checkWhoWon(fakeBoard)
+    console.log(winner)
+    if (isTie(fakeBoard) && winner !== 'P1') { return 'TIE' }
+    if (winner === 'P1') { return `${winner} WON` }
     setTimeout(opponentsTurn, '1500');
 }
 
-//asks user for first move
-// playRound()
-
-
-
-
-
-
-
-
-
-
-//code challenge #1
-//console game should not allow for player(s) to make a move 
-//on an occupied location
-
-//'2 3'
-//return 'Sorry, location is occupied. Choose another location.'
-
-
-
-
-
-//code challenge #2
-//if input isn't '2 3'
-//return 'Invalid Input. Separated by a space, enter the row, then column for your token placement'
-
-
-
-
+//if input isn't '2 3'. return 'Invalid Input.
+function isInvalidInput(tokenPlacement) {
+    return !/\d \d/.test(tokenPlacement)
+}
 
 //code challenge #3
 //console game should check for 3 in a row
@@ -100,7 +90,6 @@ function isHorizontalWin(gameBoard) {
     let opponent = gameBoard.some((row) => row.every((value) => value === 'O'))
     return p1 ? 'player' : opponent ? 'opponent' : false
 }
-console.log(isHorizontalWin([['X', 'X', ' '], ['X', 'O', 'X'], ['O', 'O', 'O']]))
 
 //vertical win input: col 1: [['X', ' ', 'O'],['X', 'O', ' '],['X', 'O', ' ']]
 //If I want to check if either player won vertically add: || value === 'O'
@@ -112,7 +101,7 @@ function isVerticalWin(gameBoard) {
     let opponent = [columnOne, columnTwo, columnThree].some((column) => column.every((value) => value === 'O'))
     return p1 ? 'player' : opponent ? 'opponent' : false
 }
-console.log(isVerticalWin([['X', 'O', 'O'], ['X', 'O', ' '], [' ', 'O', ' ']]))
+console.log(isVerticalWin([['X', 'O', 'X'], [' ', 'O', ' '], ['X', 'O', ' ']]))
 
 //diagonal win input: [['X', ' ', 'O'],[' ', 'X', ' '],['O', 'O', 'X']]
 function isDiagonalWin(gameBoard) {
@@ -123,28 +112,26 @@ function isDiagonalWin(gameBoard) {
     let opponent = [topLeftBottomRight, bottomLeftTopRight].some((diagonal) => diagonal.every((value) => value === 'O'))
     return p1 ? 'player' : opponent ? 'opponent' : false
 }
-console.log(isDiagonalWin([[' ', ' ', 'X'], [' ', 'X', ' '], ['X', 'O', ' ']]))
 
 //from a randomly generated board, check if X won and console.log the board.
 function checkWhoWon(gameBoard) {
     let opponent = 'CPU';
     if (isHorizontalWin(gameBoard) === 'player' || isVerticalWin(gameBoard) === 'player' || isDiagonalWin(gameBoard) === 'player') {
-        return 'P1 WON'
+        return 'P1'
     } else if (isHorizontalWin(gameBoard) === 'opponent' || isVerticalWin(gameBoard) === 'opponent' || isDiagonalWin(gameBoard) === 'opponent') {
-        return `${opponent} WON`
-    } else {
-        return 'TIE'
+        return `${opponent}`
     }
 }
 
 //alternate X's and O's for values in randomly generated board
-function generateRandomBoard(gameBoard) {
+function generateRandomBoard() {
     let options = {
         0: 'X',
         1: 'O',
     }
     let xCount = 0;
     let oCount = 0;
+    let gameBoard = [[' ', ' ', ' '], [' ', ' ', ' '], [' ', ' ', ' ']]
     while (gameBoard.some((row) => row.some((value) => value === ' '))) {
         let empty = ' ';
         let input;
@@ -166,5 +153,15 @@ function generateRandomBoard(gameBoard) {
     return gameBoard
 }
 
-let newBoard = generateRandomBoard(fakeBoard)
-console.log(newBoard, checkWhoWon(newBoard))
+//if every value in the board has been used, return 'TIE'
+function isTie(gameBoard) {
+    return gameBoard.every((row) => row.every((value) => value === 'O' || value === 'X'))
+}
+
+//mutate fakeBoard array to make every value = ' ';
+function restartTheGame() {
+    fakeBoard.forEach((_, i, arr) => arr[i] = Array(3).fill(' '))
+}
+
+console.log(checkWhoWon([['X', 'O', 'X'], [' ', 'O', ' '], ['X', 'O', ' ']]))
+

@@ -14,7 +14,7 @@ console game should check for 3 in a row
 console game should congratulate the winning player
 console game should check for a tie
 console game should announce a tie
-console game should have way to restart the game
+console game should have way to restart the game $
 extra credit: console game: add computer ai.
 
 
@@ -28,3 +28,8 @@ may use inheritance from factory functions.
 
 Dom elements and queries should not be responsible for storing or handling the implementation details of how our application works.
 The DOM should be responsible for reading and displaying the application state to the user and providing an easy-to-use gateway to interact with the methods it needs to. 
+
+
+
+NOTES TO MYSELF:
+opponent doesn't win

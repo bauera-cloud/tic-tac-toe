@@ -1,127 +1,150 @@
-let gameBoard = (function () {
+let GameBoard = (function () {
     'use strict';
-    let _fakeChoice = ' ';
-    let _fakeBoard = [
+    let _token = ' ';
+    let _board = [
         //row 1 - 3
-        [_fakeChoice, _fakeChoice, _fakeChoice],
-        [_fakeChoice, _fakeChoice, _fakeChoice],
-        [_fakeChoice, _fakeChoice, _fakeChoice]
+        [_token, _token, _token],
+        [_token, _token, _token],
+        [_token, _token, _token]
     ]
-    let getBoard = () => _fakeBoard;
+    let getBoard = () => _board;
 
     //used only in the console version of the game.
-    const consoleLogNewBoard = () => {
-        console.log(_fakeBoard.map((row) => row.join(' | ')).join('\n'))
+    const consoleLogBoard = () => {
+        console.log(_board.map((row) => row.join(' | ')).join('\n'))
     }
 
-    return { getBoard, consoleLogNewBoard }
+    const placeToken = (token, coordinates) => {
+        coordinates = coordinates.split(' ').map(Number);
+        let [row, column] = coordinates
+        _board[row - 1][column - 1] = token;
+    }
+
+    const placeComputersToken = () => {
+        let empty = ' ';
+        let [coordinate1, coordinate2] = [Math.floor(Math.random() * 3), Math.floor(Math.random() * 3)];
+        while (_board[coordinate1][coordinate2] !== empty) {
+            coordinate1 = Math.floor(Math.random() * 3)
+            coordinate2 = Math.floor(Math.random() * 3)
+        }
+        _board[coordinate1][coordinate2] = 'O';
+    }
+
+    let _isHorizontalWin = () => {
+        return _board.some((row) => row.every((value) => value === 'X' || value === 'O'))
+    }
+
+    let _isVerticalWin = () => {
+        let columnOne = [_board[0][0], _board[1][0], _board[2][0]]
+        let columnTwo = [_board[0][1], _board[1][1], _board[2][1]]
+        let columnThree = [_board[0][2], _board[1][2], _board[2][2]]
+        return [columnOne, columnTwo, columnThree].some((column) => column.every((value) => value === 'X'))
+    }
+
+    let _isDiagonalWin = () => {
+        let topLeftBottomRight = [_board[0][0], _board[1][1], _board[2][2]]
+        let bottomLeftTopRight = [_board[2][0], _board[1][1], _board[0][2]]
+        return [topLeftBottomRight, bottomLeftTopRight].some((diagonal) => diagonal.every((value) => value === 'X' || value === 'O'))
+    }
+
+    let hasWinner = () => {
+        return _isHorizontalWin() || _isVerticalWin() || _isDiagonalWin()
+    }
+
+    let isTie = () => {
+        return _board.every((row) => row.every((value) => value === 'O' || value === 'X'))
+    }
+
+    let reset = () => {
+        _board.forEach((_, i, arr) => arr[i] = Array(3).fill(' '))
+    }
+
+    return { getBoard, consoleLogBoard, placeToken, placeComputersToken, hasWinner, isTie, reset }
 })();
 
-// gameBoard.consoleLogNewBoard();
-
-let fakeChoice = ' ';
-let fakeBoard = [
-    //row 1 - 3
-    [fakeChoice, fakeChoice, fakeChoice],
-    [fakeChoice, fakeChoice, fakeChoice],
-    [fakeChoice, fakeChoice, fakeChoice]
-]
-
-let getBoard = () => fakeBoard
-
-//makes array of arrays to 3 strings(rows) separated by a newline
-function consoleLogNewBoard(fakeBoard) {
-    console.log(fakeBoard.map((row) => row.join(' | ')).join('\n'))
+let Player = (name, token) => {
+    let getToken = () => token;
+    let getName = () => name;
+    return { getName, getToken, name, token }
 }
 
-//expected typeof number (1, 3) for ex. number represents the row not the index.
-function coordinatesForTokenPlacement(row, column) {
-    fakeBoard[row - 1][column - 1] = 'X';
-}
+let GameController = () => {
 
-function opponentsTurn() {
-    let empty = ' ';
-    let [coordinate1, coordinate2] = [Math.floor(Math.random() * 3), Math.floor(Math.random() * 3)];
-    while (fakeBoard[coordinate1][coordinate2] !== empty) {
-        coordinate1 = Math.floor(Math.random() * 3)
-        coordinate2 = Math.floor(Math.random() * 3)
+    let _board = GameBoard;
+
+    let _players = [
+        Player('P1', 'X'),
+        Player('CPU', 'O')
+    ];
+
+    let coordinates;
+
+    let _activePlayer = _players[0];
+
+    let _switchPlayersTurn = () => {
+        _activePlayer = _activePlayer === _players[0] ? _players[1] : _players[0];
     }
-    fakeBoard[coordinate1][coordinate2] = 'O';
-    consoleLogNewBoard(fakeBoard)
-    if (checkWhoWon(fakeBoard) === 'CPU') {
-        console.log('CPU WON')
-        return
-    }
-}
 
-//asks for expected string '1 3'.turns each into their own number placed into their respective variables. puts an "X" into coordinates. Shows new board.
-function playRound() {
-    let winner;
-    let tokenPlacement = prompt('Separated by a space, enter the row, then column for your token placement');
-    while (isInvalidInput(tokenPlacement) || fakeBoard[tokenPlacement[Number(0)] - 1][tokenPlacement[Number(2)] - 1] !== ' ') {
-        if (isInvalidInput(tokenPlacement)) {
-            tokenPlacement = prompt('Invalid input. Separated by a space, enter the row, then column for your token placement')
-        } else if (fakeBoard[tokenPlacement[Number(0)] - 1][tokenPlacement[Number(2)] - 1] !== ' ') {
-            tokenPlacement = prompt('Sorry, location is occupied. Choose another location.')
+    let getActivePlayer = () => _activePlayer;
+
+    let _chooseOpponent = () => {
+        let opponent = prompt("Play against: 'c' for CPU or 'p2' for P2") === 'p2' ? Player('P2', 'O') : Player('CPU', 'O')
+        _players.pop()
+        _players.push(opponent)
+    }
+
+    let _printNewRound = () => {
+        _board.consoleLogBoard();
+        console.log(`${getActivePlayer().name}'s turn`)
+    }
+
+    let _computerPlaysTurn = () => {
+        setTimeout(() => {
+            _board.placeComputersToken()
+            if (_board.hasWinner()) {
+                _board.consoleLogBoard()
+                return `${getActivePlayer().name} WON`
+            }
+            _switchPlayersTurn();
+            _printNewRound();
+        }, '2000')
+    }
+
+    let _invalidInput = () => {
+        return !/\d \d/.test(coordinates)
+    }
+
+    let _getValidInput = () => {
+        while (_invalidInput(coordinates)) {
+            coordinates = prompt('Invalid input. Separated by a space, enter the row, then column for your token placement.')
         }
     }
-    let [row, column] = tokenPlacement.split(' ').map(Number)
-    coordinatesForTokenPlacement(row, column)
-    consoleLogNewBoard(fakeBoard)
-    winner = checkWhoWon(fakeBoard)
-    console.log(winner)
-    if (isTie(fakeBoard) && winner !== 'P1') { return 'TIE' }
-    if (winner === 'P1') { return `${winner} WON` }
-    setTimeout(opponentsTurn, '1500');
-}
 
-//if input isn't '2 3'. return 'Invalid Input.
-function isInvalidInput(tokenPlacement) {
-    return !/\d \d/.test(tokenPlacement)
-}
-
-//code challenge #3
-//console game should check for 3 in a row
-
-//horizontal win input: [['X', 'X', 'X'],[' ', 'O', ' '],['O', 'O', ' ']]
-//If I want to check if either player won - put: || value === 'O'.
-function isHorizontalWin(gameBoard) {
-    let p1 = gameBoard.some((row) => row.every((value) => value === 'X'))
-    let opponent = gameBoard.some((row) => row.every((value) => value === 'O'))
-    return p1 ? 'player' : opponent ? 'opponent' : false
-}
-
-//vertical win input: col 1: [['X', ' ', 'O'],['X', 'O', ' '],['X', 'O', ' ']]
-//If I want to check if either player won vertically add: || value === 'O'
-function isVerticalWin(gameBoard) {
-    let columnOne = [gameBoard[0][0], gameBoard[1][0], gameBoard[2][0]]
-    let columnTwo = [gameBoard[0][1], gameBoard[1][1], gameBoard[2][1]]
-    let columnThree = [gameBoard[0][2], gameBoard[1][2], gameBoard[2][2]]
-    let p1 = [columnOne, columnTwo, columnThree].some((column) => column.every((value) => value === 'X'))
-    let opponent = [columnOne, columnTwo, columnThree].some((column) => column.every((value) => value === 'O'))
-    return p1 ? 'player' : opponent ? 'opponent' : false
-}
-console.log(isVerticalWin([['X', 'O', 'X'], [' ', 'O', ' '], ['X', 'O', ' ']]))
-
-//diagonal win input: [['X', ' ', 'O'],[' ', 'X', ' '],['O', 'O', 'X']]
-function isDiagonalWin(gameBoard) {
-    //diagonal arrays
-    let topLeftBottomRight = [gameBoard[0][0], gameBoard[1][1], gameBoard[2][2]]
-    let bottomLeftTopRight = [gameBoard[2][0], gameBoard[1][1], gameBoard[0][2]]
-    let p1 = [topLeftBottomRight, bottomLeftTopRight].some((diagonal) => diagonal.every((value) => value === 'X'))
-    let opponent = [topLeftBottomRight, bottomLeftTopRight].some((diagonal) => diagonal.every((value) => value === 'O'))
-    return p1 ? 'player' : opponent ? 'opponent' : false
-}
-
-//from a randomly generated board, check if X won and console.log the board.
-function checkWhoWon(gameBoard) {
-    let opponent = 'CPU';
-    if (isHorizontalWin(gameBoard) === 'player' || isVerticalWin(gameBoard) === 'player' || isDiagonalWin(gameBoard) === 'player') {
-        return 'P1'
-    } else if (isHorizontalWin(gameBoard) === 'opponent' || isVerticalWin(gameBoard) === 'opponent' || isDiagonalWin(gameBoard) === 'opponent') {
-        return `${opponent}`
+    let playRound = () => {
+        coordinates = prompt('Separated by a space, enter the row, then column for your token placement');
+        if (_invalidInput()) { _getValidInput() }
+        _board.placeToken(getActivePlayer().token, coordinates)
+        if (_board.hasWinner()) { return `${getActivePlayer().name} WON` }
+        if (_board.isTie()) { return 'TIE' }
+        _switchPlayersTurn();
+        _printNewRound();
+        if (getActivePlayer().name === 'CPU') { _computerPlaysTurn() }
     }
+
+    let restartGame = () => {
+        if (getActivePlayer().name === 'P2') { _switchPlayersTurn() }
+        _board.reset()
+        _printNewRound()
+        return
+    };
+
+    // _chooseOpponent()
+    _printNewRound()
+
+    return { playRound, getActivePlayer, restartGame }
 }
+
+let game = GameController();
 
 //alternate X's and O's for values in randomly generated board
 function generateRandomBoard() {
@@ -152,16 +175,3 @@ function generateRandomBoard() {
     }
     return gameBoard
 }
-
-//if every value in the board has been used, return 'TIE'
-function isTie(gameBoard) {
-    return gameBoard.every((row) => row.every((value) => value === 'O' || value === 'X'))
-}
-
-//mutate fakeBoard array to make every value = ' ';
-function restartTheGame() {
-    fakeBoard.forEach((_, i, arr) => arr[i] = Array(3).fill(' '))
-}
-
-console.log(checkWhoWon([['X', 'O', 'X'], [' ', 'O', ' '], ['X', 'O', ' ']]))
-

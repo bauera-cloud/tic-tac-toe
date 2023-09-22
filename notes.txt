@@ -5,17 +5,24 @@ build the game so that it can be played, in full, in the console
 
 overall plan: finish console game. create the webpage for the DOM game. Add UI controls.
 
-plan for today: reread Git body suggestion. commit each step. 
-put every variable in their own factory function
-console game should have an invalid input error message $
-console game should allow to play against a player2
-console game should not allow for player(s) to make a move on an occupied location $
-console game should check for 3 in a row 
-console game should congratulate the winning player
-console game should check for a tie
-console game should announce a tie
-console game should have way to restart the game $
+plan for today: (reread Git body suggestion. commit each step.)
+
+put every remaining global functions in their own factory function
+
+create the tic-tac-toe board with css and html
+get the winner for 3 in a row working correctly
+
 extra credit: console game: add computer ai.
+
+implemented:
+console game should allow to play against a player2 $
+console game should not allow for player(s) to make a move on an occupied location $
+console game should check for 3 in a row $
+console game should congratulate the winning player $
+console game should check for a tie $
+console game should announce a tie $
+console game should have way to restart the game $
+console game should have an invalid input error message $
 
 
 
@@ -30,6 +37,3 @@ Dom elements and queries should not be responsible for storing or handling the i
 The DOM should be responsible for reading and displaying the application state to the user and providing an easy-to-use gateway to interact with the methods it needs to. 
 
 
-
-NOTES TO MYSELF:
-opponent doesn't win

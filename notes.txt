@@ -7,31 +7,21 @@ overall plan: finish console game. create the webpage for the DOM game. Add UI c
 
 plan for today: (reread Git body suggestion. commit each step.)
 
-put every remaining global functions in their own factory function
-
 create the tic-tac-toe board with css and html
 get the winner for 3 in a row working correctly
+make sure a tie is working
+location is occupied function working
+
 
 extra credit: console game: add computer ai.
 
 implemented:
-console game should allow to play against a player2 $
 console game should not allow for player(s) to make a move on an occupied location $
-console game should check for 3 in a row $
-console game should congratulate the winning player $
-console game should check for a tie $
-console game should announce a tie $
-console game should have way to restart the game $
-console game should have an invalid input error message $
 
 
 
-start the game by selecting a position for P1's token
-P1 will always be X. P2 and CPU will always be O
 make the game start against the easy computer. easy = random. medium = ai.
-players and computer stored inside factory function
 DOM - click CPU to change to P2
-may use inheritance from factory functions.
 
 Dom elements and queries should not be responsible for storing or handling the implementation details of how our application works.
 The DOM should be responsible for reading and displaying the application state to the user and providing an easy-to-use gateway to interact with the methods it needs to. 

@@ -59,7 +59,12 @@ let GameBoard = (function () {
         _board.forEach((_, i, arr) => arr[i] = Array(3).fill(' '))
     }
 
-    return { getBoard, consoleLogBoard, placeToken, placeComputersToken, hasWinner, isTie, reset }
+    let isLocationOccupied = (coordinates) => {
+        let [row, column] = coordinates.split(' ').map(Number);
+        return _board[row - 1][column - 1] !== ' '
+    }
+
+    return { getBoard, consoleLogBoard, placeToken, placeComputersToken, hasWinner, isTie, reset, isLocationOccupied }
 })();
 
 let Player = (name, token) => {
@@ -114,15 +119,20 @@ let GameController = () => {
         return !/\d \d/.test(coordinates)
     }
 
+    //or if a player choose coordinates that are already occupied.
     let _getValidInput = () => {
-        while (_invalidInput(coordinates)) {
-            coordinates = prompt('Invalid input. Separated by a space, enter the row, then column for your token placement.')
+        while (_invalidInput(coordinates) || _board.isLocationOccupied(coordinates)) {
+            if (_invalidInput(coordinates)) {
+                coordinates = prompt('Invalid input. Separated by a space, enter the row, then column for your token placement.')
+            } else if (_board.isLocationOccupied(coordinates)) {
+                coordinates = prompt('Occupied location. Try again.')
+            }
         }
     }
 
     let playRound = () => {
         coordinates = prompt('Separated by a space, enter the row, then column for your token placement');
-        if (_invalidInput()) { _getValidInput() }
+        if (_invalidInput() || _board.isLocationOccupied(coordinates)) { _getValidInput() }
         _board.placeToken(getActivePlayer().token, coordinates)
         if (_board.hasWinner()) { return `${getActivePlayer().name} WON` }
         if (_board.isTie()) { return 'TIE' }
@@ -175,3 +185,11 @@ function generateRandomBoard() {
     }
     return gameBoard
 }
+
+
+//location = 'X' | ' ' | 'O'
+function isLocationOccupied(location) {
+
+}
+//board[0][1], board[1][1] is occupied by X or O
+console.log(isLocationOccupied([' ', 'X', ' '], [' ', 'O', 'X'], ['O', ' ', ' ']))

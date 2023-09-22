@@ -8,9 +8,6 @@ overall plan: finish console game. create the webpage for the DOM game. Add UI c
 plan for today: (reread Git body suggestion. commit each step.)
 
 create the tic-tac-toe board with css and html
-get the winner for 3 in a row working correctly
-make sure a tie is working
-location is occupied function working
 
 
 extra credit: console game: add computer ai.

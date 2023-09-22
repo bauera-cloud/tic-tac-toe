@@ -31,27 +31,33 @@ let GameBoard = (function () {
     }
 
     let _isHorizontalWin = () => {
-        return _board.some((row) => row.every((value) => value === 'X' || value === 'O'))
+        let player1Won = _board.some((row) => row.every((value) => value === 'X'))
+        let opponentWon = _board.some((row) => row.every((value) => value === 'O'))
+        return player1Won || opponentWon
     }
 
     let _isVerticalWin = () => {
         let columnOne = [_board[0][0], _board[1][0], _board[2][0]]
         let columnTwo = [_board[0][1], _board[1][1], _board[2][1]]
         let columnThree = [_board[0][2], _board[1][2], _board[2][2]]
-        return [columnOne, columnTwo, columnThree].some((column) => column.every((value) => value === 'X'))
+        let player1Won = [columnOne, columnTwo, columnThree].some((column) => column.every((value) => value === 'X'))
+        let opponentWon = [columnOne, columnTwo, columnThree].some((column) => column.every((value) => value === 'O'))
+        return player1Won || opponentWon
     }
 
     let _isDiagonalWin = () => {
         let topLeftBottomRight = [_board[0][0], _board[1][1], _board[2][2]]
         let bottomLeftTopRight = [_board[2][0], _board[1][1], _board[0][2]]
-        return [topLeftBottomRight, bottomLeftTopRight].some((diagonal) => diagonal.every((value) => value === 'X' || value === 'O'))
+        let player1Won = [topLeftBottomRight, bottomLeftTopRight].some((diagonal) => diagonal.every((value) => value === 'X'))
+        let opponentWon = [topLeftBottomRight, bottomLeftTopRight].some((diagonal) => diagonal.every((value) => value === 'O'))
+        return player1Won || opponentWon
     }
 
     let hasWinner = () => {
         return _isHorizontalWin() || _isVerticalWin() || _isDiagonalWin()
     }
 
-    let isTie = () => {
+    let isFull = () => {
         return _board.every((row) => row.every((value) => value === 'O' || value === 'X'))
     }
 
@@ -64,7 +70,7 @@ let GameBoard = (function () {
         return _board[row - 1][column - 1] !== ' '
     }
 
-    return { getBoard, consoleLogBoard, placeToken, placeComputersToken, hasWinner, isTie, reset, isLocationOccupied }
+    return { getBoard, consoleLogBoard, placeToken, placeComputersToken, hasWinner, isFull, reset, isLocationOccupied }
 })();
 
 let Player = (name, token) => {
@@ -119,7 +125,6 @@ let GameController = () => {
         return !/\d \d/.test(coordinates)
     }
 
-    //or if a player choose coordinates that are already occupied.
     let _getValidInput = () => {
         while (_invalidInput(coordinates) || _board.isLocationOccupied(coordinates)) {
             if (_invalidInput(coordinates)) {
@@ -134,8 +139,9 @@ let GameController = () => {
         coordinates = prompt('Separated by a space, enter the row, then column for your token placement');
         if (_invalidInput() || _board.isLocationOccupied(coordinates)) { _getValidInput() }
         _board.placeToken(getActivePlayer().token, coordinates)
-        if (_board.hasWinner()) { return `${getActivePlayer().name} WON` }
-        if (_board.isTie()) { return 'TIE' }
+        if (_board.hasWinner()) {
+            return `${getActivePlayer().name} WON`
+        } else if (_board.isFull()) { return 'TIE' }
         _switchPlayersTurn();
         _printNewRound();
         if (getActivePlayer().name === 'CPU') { _computerPlaysTurn() }
@@ -148,7 +154,7 @@ let GameController = () => {
         return
     };
 
-    // _chooseOpponent()
+    _chooseOpponent()
     _printNewRound()
 
     return { playRound, getActivePlayer, restartGame }
@@ -157,39 +163,31 @@ let GameController = () => {
 let game = GameController();
 
 //alternate X's and O's for values in randomly generated board
-function generateRandomBoard() {
-    let options = {
-        0: 'X',
-        1: 'O',
-    }
-    let xCount = 0;
-    let oCount = 0;
-    let gameBoard = [[' ', ' ', ' '], [' ', ' ', ' '], [' ', ' ', ' ']]
-    while (gameBoard.some((row) => row.some((value) => value === ' '))) {
-        let empty = ' ';
-        let input;
-        let [coordinate1, coordinate2] = [Math.floor(Math.random() * 3), Math.floor(Math.random() * 3)];
-        while (gameBoard[coordinate1][coordinate2] !== empty) {
-            coordinate1 = Math.floor(Math.random() * 3)
-            coordinate2 = Math.floor(Math.random() * 3)
-        }
-        if (xCount > oCount) {
-            input = 'O';
-        } else if (xCount < oCount) {
-            input = 'X';
-        } else {
-            input = options[Math.floor(Math.random() * 2)]
-        }
-        input === 'X' ? xCount++ : oCount++
-        gameBoard[coordinate1][coordinate2] = input
-    }
-    return gameBoard
-}
-
-
-//location = 'X' | ' ' | 'O'
-function isLocationOccupied(location) {
-
-}
-//board[0][1], board[1][1] is occupied by X or O
-console.log(isLocationOccupied([' ', 'X', ' '], [' ', 'O', 'X'], ['O', ' ', ' ']))
+// function generateRandomBoard() {
+//     let options = {
+//         0: 'X',
+//         1: 'O',
+//     }
+//     let xCount = 0;
+//     let oCount = 0;
+//     let gameBoard = [[' ', ' ', ' '], [' ', ' ', ' '], [' ', ' ', ' ']]
+//     while (gameBoard.some((row) => row.some((value) => value === ' '))) {
+//         let empty = ' ';
+//         let input;
+//         let [coordinate1, coordinate2] = [Math.floor(Math.random() * 3), Math.floor(Math.random() * 3)];
+//         while (gameBoard[coordinate1][coordinate2] !== empty) {
+//             coordinate1 = Math.floor(Math.random() * 3)
+//             coordinate2 = Math.floor(Math.random() * 3)
+//         }
+//         if (xCount > oCount) {
+//             input = 'O';
+//         } else if (xCount < oCount) {
+//             input = 'X';
+//         } else {
+//             input = options[Math.floor(Math.random() * 2)]
+//         }
+//         input === 'X' ? xCount++ : oCount++
+//         gameBoard[coordinate1][coordinate2] = input
+//     }
+//     return gameBoard
+// }

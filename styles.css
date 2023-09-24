@@ -1,3 +1,99 @@
-h1 {
-    color: red
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400&family=Raleway:wght@100;400&family=Roboto&display=swap');
+
+body {
+    background-color: #ededed;
+    font-family: 'Raleway', sans-serif;
 }
+
+.game {
+    /* center horizontally and vertically */
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    -webkit-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+}
+
+.title {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 50px;
+    width: 450px;
+    height: 75px;
+    font-size: 1.5rem;
+    color: rgb(90, 90, 90);
+}
+
+.gameboard {
+    width: 450px;
+    height: 450px;
+    color: #4664a8;
+    border: none;
+
+    display: grid;
+    grid-template: repeat(3, 1fr) / repeat(3, 1fr);
+}
+
+.square {
+    border: 1px solid rgb(170, 169, 169);
+    font-size: 5rem;
+    font-weight: 400;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.scores {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    margin-top: 50px;
+    font-size: 1.4rem;
+    width: 450px;
+    height: 75px;
+}
+
+.p1,
+.opponent {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    font-weight: bold;
+}
+
+.name_and_difficulty {
+    display: flex;
+    flex-direction: row;
+    gap: 30px;
+    padding-left: 73px;
+}
+
+.difficulty {
+    position: relative;
+    top: 20px;
+    font-size: 1rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.restart {
+    margin-top: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#restartBtn {
+    color: green;
+    padding: 0;
+    border: none;
+    background: none;
+}
+
+/* from idealResult.jpg
+color for O's: #f24b4d 
+color for X's: #4664a8
+color for borders: #fefefe
+*/

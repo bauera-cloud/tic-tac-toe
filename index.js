@@ -154,7 +154,7 @@ let GameController = () => {
         return
     };
 
-    _chooseOpponent()
+    // _chooseOpponent()
     _printNewRound()
 
     return { playRound, getActivePlayer, restartGame }

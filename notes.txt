@@ -1,26 +1,47 @@
 goals: 
 use as little global code as possible.
 separate state logic from the UI controls.
+    NOTES: Dom elements and queries should not be responsible for storing or handling the implementation details of how our application works.
+           The DOM should be responsible for reading and displaying the application state to the user and providing an easy-to-use gateway to interact with the methods it needs to. 
 build the game so that it can be played, in full, in the console
 
-overall plan: finish console game. create the webpage for the DOM game. Add UI controls.
+overall plan: create the webpage for the DOM game. Add UI controls.
 
 plan for today: (reread Git body suggestion. commit each step.)
 
-create the tic-tac-toe board with css and html
+
+JS 
+
+add computer ai:
+    game starts at easy difficulty/random.
+    medium difficulty is an ai
+
+DOM
+
+font color will change depending on if the token is an X or O
+
+animation:
+    for generating the O
+    generating the X
+    generating a line through tokens when there's a win
+
+click CPU to change to P2
+click EASY to change to MEDIUM. RESTART GAME.
 
 
-extra credit: console game: add computer ai.
-
-implemented:
-console game should not allow for player(s) to make a move on an occupied location $
 
 
 
-make the game start against the easy computer. easy = random. medium = ai.
-DOM - click CPU to change to P2
 
-Dom elements and queries should not be responsible for storing or handling the implementation details of how our application works.
-The DOM should be responsible for reading and displaying the application state to the user and providing an easy-to-use gateway to interact with the methods it needs to. 
+STEPS
 
+STEP 1: GAME START
+    EMPTY BOARD
+    P1 CPU EASY
+    X = 0, O = 0
+    RESTART BUTTON
+STEP 2: CLICK SQUARE
+    ADD TOKEN OF CURRENT PLAYER TO SQUARE
+    IF CURRENT PLAYER IS P1 TOKEN COLOR IS BLUE
+    IF CURRENT PLAYER IS OPPONENT COLOR IS RED
 

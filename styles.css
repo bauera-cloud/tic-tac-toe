@@ -23,6 +23,7 @@ body {
     height: 75px;
     font-size: 1.5rem;
     color: rgb(90, 90, 90);
+    margin-left: 10px;
 }
 
 .gameboard {
@@ -70,12 +71,12 @@ body {
     display: flex;
     flex-direction: row;
     gap: 30px;
-    padding-left: 73px;
 }
 
 .difficulty {
-    position: relative;
-    top: 20px;
+    position: absolute;
+    top: 605px;
+    right: 40px;
     font-size: 1rem;
     display: flex;
     flex-direction: column;

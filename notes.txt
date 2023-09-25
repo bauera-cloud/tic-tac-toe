@@ -18,15 +18,16 @@ add computer ai:
 
 DOM
 
+click square to add current players token
 font color will change depending on if the token is an X or O
+click CPU to change to P2. hide difficulty/visibility: hidden;
+click EASY to change to MEDIUM. RESTART GAME.
 
 animation:
     for generating the O
     generating the X
     generating a line through tokens when there's a win
 
-click CPU to change to P2
-click EASY to change to MEDIUM. RESTART GAME.
 
 
 

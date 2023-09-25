@@ -157,7 +157,7 @@ let GameController = () => {
     // _chooseOpponent()
     _printNewRound()
 
-    return { playRound, getActivePlayer, restartGame }
+    return { playRound, getActivePlayer, restartGame, getBoard: _board.getBoard }
 }
 
 let game = GameController();
@@ -191,3 +191,39 @@ let game = GameController();
 //     }
 //     return gameBoard
 // }
+
+let ScreenController = function () {
+    let opponentNode = document.querySelector('.opponent');
+
+    let toggleOpponent = (e) => {
+        if (e.target.textContent === 'CPU') {
+            e.target.textContent = 'P2';
+            e.target.nextElementSibling.style.display = 'none'
+        } else if (e.target.textContent === 'P2') {
+            e.target.textContent = 'CPU';
+            e.target.nextElementSibling.style.display = 'inline'
+        }
+        if (e.target.textContent === 'EASY') {
+            e.target.textContent = 'MEDIUM';
+            e.target.style.right = '18px';
+        } else if (e.target.textContent === 'MEDIUM') {
+            e.target.textContent = 'EASY';
+            e.target.style.right = '40px';
+        }
+        //restartgame()
+    }
+
+    opponentNode.addEventListener('click', toggleOpponent)
+}
+
+
+ScreenController();
+
+//DOM
+
+//click square to add current players token
+let square2 = document.querySelector('.square:nth-child(2)');
+console.log(square2.textContent)
+//node.textContent = 'X', 'O', or ''
+
+//font color will change depending on if the token is an X or O

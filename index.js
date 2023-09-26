@@ -202,7 +202,7 @@ let ScreenController = function () {
     }
 
     function waitForComputersTurn() {
-        if (GameBoard.hasWinner()) { return }
+        // if (GameBoard.hasWinner()) { return }
         //add square.disabled = true; to every square.
         //then after '2001' ms, square.disabled = false;
         allSquares.forEach((squareBtn) => {
@@ -213,7 +213,9 @@ let ScreenController = function () {
             updateScreen();
             allSquares.forEach((squareBtn) => {
                 squareBtn.disabled = false;
-            })
+            });
+            handleTie()
+            if (GameBoard.hasWinner()) { increaseCurrentPlayerScore() }
         }
             , '1210')
     }
@@ -303,6 +305,7 @@ let ScreenController = function () {
         let selectedColumn = e.target.dataset.column;
         game.playRound(selectedRow, selectedColumn)
         updateScreen();
+        //computers turn checks to see if the computer won.
         if (getActivePlayer().name === 'CPU') { waitForComputersTurn() }
         handleTie()
         if (GameBoard.hasWinner()) { increaseCurrentPlayerScore() }

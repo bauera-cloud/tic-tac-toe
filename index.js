@@ -178,25 +178,30 @@ let GameController = () => {
 // }
 
 let ScreenController = function () {
-    let game = GameController();
-    let opponentNode = document.querySelector('.opponent');
-    let boardNode = document.querySelector('.gameboard');
-    let p1ScoreDiv = document.querySelector('.scores .p1_score');
-    let opponentScoreDiv = document.querySelector('.scores .opponent_score');
-    let restartBtn = document.querySelector('#restartBtn');
+    const game = GameController();
+    const opponentNode = document.querySelector('.opponent');
+    const boardNode = document.querySelector('.gameboard');
+    const p1ScoreDiv = document.querySelector('.scores .p1_score');
+    const opponentScoreDiv = document.querySelector('.scores .opponent_score');
+    const restartBtn = document.querySelector('#restartBtn');
     let scoreHasBeenAdded;
     let isTie;
 
     const _board = game.getBoard();
 
-    let { restartGame, changeOpponent, getActivePlayer } = game;
+    const { restartGame, changeOpponent, getActivePlayer } = game;
 
     function restart() {
         restartGame()
         updateScreen();
     }
 
-    let updateScreen = () => {
+    function resetScores() {
+        p1ScoreDiv.textContent = '0'
+        opponentScoreDiv.textContent = '0'
+    }
+
+    const updateScreen = () => {
         //clear the board
         boardNode.textContent = '';
 
@@ -231,7 +236,6 @@ let ScreenController = function () {
         let currentPlayer = getActivePlayer().name;
         let p1Score = Number(p1ScoreDiv.textContent)
         let opponentScore = Number(opponentScoreDiv.textContent)
-        console.log(currentPlayer)
         if (GameBoard.hasWinner() && scoreHasBeenAdded) {
             restartGame();
             updateScreen();
@@ -266,6 +270,7 @@ let ScreenController = function () {
             e.target.textContent = 'EASY';
             e.target.style.right = '40px';
         }
+        resetScores()
         restartGame();
         updateScreen();
     }

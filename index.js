@@ -215,6 +215,11 @@ let ScreenController = function () {
                 squareButton.dataset.row = index;
                 squareButton.dataset.column = column
                 squareButton.textContent = square;
+                if (square === 'X') {
+                    squareButton.style.color = '#4664a8'
+                } else if (square === 'O') {
+                    squareButton.style.color = '#f24b4d'
+                }
                 boardNode.appendChild(squareButton);
                 column += 1
             })

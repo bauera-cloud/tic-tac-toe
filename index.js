@@ -183,6 +183,7 @@ let ScreenController = function () {
     let opponentScoreDiv = document.querySelector('.scores .opponent_score');
     let restartBtn = document.querySelector('#restartBtn');
     let scoreHasBeenAdded;
+    let isTie;
 
     const _board = game.getBoard();
 
@@ -211,6 +212,16 @@ let ScreenController = function () {
                 column += 1
             })
         })
+    }
+
+    function handleTie() {
+        if (isTie) {
+            restartGame();
+            updateScreen();
+        }
+        if (GameBoard.isFull() && !GameBoard.hasWinner()) {
+            isTie = true
+        }
     }
 
     function increaseCurrentPlayerScore() {
@@ -257,6 +268,7 @@ let ScreenController = function () {
         let selectedColumn = e.target.dataset.column;
         game.playRound(selectedRow, selectedColumn)
         updateScreen();
+        handleTie()
         if (GameBoard.hasWinner()) { increaseCurrentPlayerScore() }
     }
 
@@ -272,3 +284,4 @@ ScreenController();
 //DOM
 
 //font color will change depending on if the token is an X or O
+//bug when computer wins: 

@@ -14,12 +14,11 @@ let GameBoard = (function () {
         console.log(_board.map((row) => row.join(' | ')).join('\n'))
     }
 
-    const placeToken = (token, coordinates) => {
-        coordinates = coordinates.split(' ').map(Number);
-        let [row, column] = coordinates
-        _board[row - 1][column - 1] = token;
+    const placeToken = (token, row, column) => {
+        _board[row][column] = token;
     }
 
+    //DOM + CONSOLE CHECK
     const placeComputersToken = () => {
         let empty = ' ';
         let [coordinate1, coordinate2] = [Math.floor(Math.random() * 3), Math.floor(Math.random() * 3)];
@@ -65,9 +64,9 @@ let GameBoard = (function () {
         _board.forEach((_, i, arr) => arr[i] = Array(3).fill(' '))
     }
 
-    let isLocationOccupied = (coordinates) => {
-        let [row, column] = coordinates.split(' ').map(Number);
-        return _board[row - 1][column - 1] !== ' '
+    //looks at index of board.
+    let isLocationOccupied = (row, column) => {
+        return _board[row][column] !== ' '
     }
 
     return { getBoard, consoleLogBoard, placeToken, placeComputersToken, hasWinner, isFull, reset, isLocationOccupied }
@@ -88,18 +87,17 @@ let GameController = () => {
         Player('CPU', 'O')
     ];
 
-    let coordinates;
-
     let _activePlayer = _players[0];
 
+    //DOMCHECK
     let _switchPlayersTurn = () => {
         _activePlayer = _activePlayer === _players[0] ? _players[1] : _players[0];
     }
 
+    //DOMCHECK
     let getActivePlayer = () => _activePlayer;
 
-    let _chooseOpponent = () => {
-        let opponent = prompt("Play against: 'c' for CPU or 'p2' for P2") === 'p2' ? Player('P2', 'O') : Player('CPU', 'O')
+    let _changeOpponent = () => {
         _players.pop()
         _players.push(opponent)
     }
@@ -109,36 +107,23 @@ let GameController = () => {
         console.log(`${getActivePlayer().name}'s turn`)
     }
 
+    //CONSOLE ONLY
     let _computerPlaysTurn = () => {
-        setTimeout(() => {
-            _board.placeComputersToken()
-            if (_board.hasWinner()) {
-                _board.consoleLogBoard()
-                return `${getActivePlayer().name} WON`
-            }
-            _switchPlayersTurn();
-            _printNewRound();
-        }, '2000')
-    }
-
-    let _invalidInput = () => {
-        return !/\d \d/.test(coordinates)
-    }
-
-    let _getValidInput = () => {
-        while (_invalidInput(coordinates) || _board.isLocationOccupied(coordinates)) {
-            if (_invalidInput(coordinates)) {
-                coordinates = prompt('Invalid input. Separated by a space, enter the row, then column for your token placement.')
-            } else if (_board.isLocationOccupied(coordinates)) {
-                coordinates = prompt('Occupied location. Try again.')
-            }
+        _board.placeComputersToken()
+        if (_board.hasWinner()) {
+            _board.consoleLogBoard()
+            return `${getActivePlayer().name} WON`
         }
+        _switchPlayersTurn();
+        _printNewRound();
     }
 
-    let playRound = () => {
-        coordinates = prompt('Separated by a space, enter the row, then column for your token placement');
-        if (_invalidInput() || _board.isLocationOccupied(coordinates)) { _getValidInput() }
-        _board.placeToken(getActivePlayer().token, coordinates)
+    let playRound = (row, column) => {
+        //if location on board isn't occupied. place token.
+        if (_board.isLocationOccupied(row, column)) {
+            return
+        }
+        _board.placeToken(getActivePlayer().token, row, column)
         if (_board.hasWinner()) {
             return `${getActivePlayer().name} WON`
         } else if (_board.isFull()) { return 'TIE' }
@@ -147,6 +132,7 @@ let GameController = () => {
         if (getActivePlayer().name === 'CPU') { _computerPlaysTurn() }
     }
 
+    //DOMCHECK
     let restartGame = () => {
         if (getActivePlayer().name === 'P2') { _switchPlayersTurn() }
         _board.reset()
@@ -154,13 +140,10 @@ let GameController = () => {
         return
     };
 
-    // _chooseOpponent()
     _printNewRound()
 
     return { playRound, getActivePlayer, restartGame, getBoard: _board.getBoard }
 }
-
-let game = GameController();
 
 //alternate X's and O's for values in randomly generated board
 // function generateRandomBoard() {
@@ -193,9 +176,65 @@ let game = GameController();
 // }
 
 let ScreenController = function () {
+    let game = GameController();
     let opponentNode = document.querySelector('.opponent');
+    let boardNode = document.querySelector('.gameboard');
+    let p1ScoreDiv = document.querySelector('.scores .p1_score');
+    let opponentScoreDiv = document.querySelector('.scores .opponent_score');
+    let restartBtn = document.querySelector('#restartBtn');
+    let scoreHasBeenAdded;
 
-    let toggleOpponent = (e) => {
+    const _board = game.getBoard();
+
+    let { restartGame } = game;
+
+    function restart() {
+        restartGame()
+        updateScreen();
+    }
+
+    let updateScreen = () => {
+        //clear the board
+        boardNode.textContent = '';
+
+        let column = 0
+        //connects the values of the board array to the DOM nodes
+        _board.forEach((row, index) => {
+            row.forEach(square => {
+                if (column === 3) { column = 0 }
+                const squareButton = document.createElement('button');
+                squareButton.classList.add('square');
+                squareButton.dataset.row = index;
+                squareButton.dataset.column = column
+                squareButton.textContent = square;
+                boardNode.appendChild(squareButton);
+                column += 1
+            })
+        })
+    }
+
+    function increaseCurrentPlayerScore() {
+        let currentPlayer = game.getActivePlayer().name;
+        let p1Score = Number(p1ScoreDiv.textContent)
+        let opponentScore = Number(opponentScoreDiv.textContent)
+        if (GameBoard.hasWinner() && scoreHasBeenAdded) {
+            restartGame();
+            updateScreen();
+            scoreHasBeenAdded = undefined
+            return
+        }
+        if (currentPlayer === 'P1') {
+            p1Score++
+            p1ScoreDiv.textContent = String(p1Score)
+            scoreHasBeenAdded = true
+        } else if (currentPlayer === 'P2' || currentPlayer === 'CPU') {
+            opponentScore++
+            opponentScoreDiv.textContent = String(opponentScore)
+            scoreHasBeenAdded = true
+        }
+    }
+
+    function toggleOpponent(e) {
         if (e.target.textContent === 'CPU') {
             e.target.textContent = 'P2';
             e.target.nextElementSibling.style.display = 'none'
@@ -210,9 +249,20 @@ let ScreenController = function () {
             e.target.textContent = 'EASY';
             e.target.style.right = '40px';
         }
-        //restartgame()
+        updateScreen();
     }
 
+    function clickHandlerBoard(e) {
+        let selectedRow = e.target.dataset.row;
+        let selectedColumn = e.target.dataset.column;
+        game.playRound(selectedRow, selectedColumn)
+        updateScreen();
+        if (GameBoard.hasWinner()) { increaseCurrentPlayerScore() }
+    }
+
+    updateScreen()
+    restartBtn.addEventListener('click', restart)
+    boardNode.addEventListener('click', clickHandlerBoard);
     opponentNode.addEventListener('click', toggleOpponent)
 }
 
@@ -220,10 +270,5 @@ let ScreenController = function () {
 ScreenController();
 
 //DOM
-
-//click square to add current players token
-let square2 = document.querySelector('.square:nth-child(2)');
-console.log(square2.textContent)
-//node.textContent = 'X', 'O', or ''
 
 //font color will change depending on if the token is an X or O

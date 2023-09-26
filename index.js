@@ -287,4 +287,3 @@ ScreenController();
 //DOM
 
 //font color will change depending on if the token is an X or O
-//bug when computer wins: 

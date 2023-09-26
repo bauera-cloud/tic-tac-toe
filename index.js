@@ -125,7 +125,9 @@ let GameController = () => {
         }
         _board.placeToken(getActivePlayer().token, row, column)
         if (_board.hasWinner()) {
-            return `${getActivePlayer().name} WON`
+            console.log(`${getActivePlayer().name} WON`)
+            if (getActivePlayer().name !== 'P1') { _switchPlayersTurn() }
+            return
         } else if (_board.isFull()) { return 'TIE' }
         _switchPlayersTurn();
         _printNewRound();
@@ -134,7 +136,7 @@ let GameController = () => {
 
     //DOMCHECK
     let restartGame = () => {
-        if (getActivePlayer().name === 'P2') { _switchPlayersTurn() }
+        if (getActivePlayer().name !== 'P1') { _switchPlayersTurn() }
         _board.reset()
         _printNewRound()
         return
@@ -218,6 +220,7 @@ let ScreenController = function () {
         if (isTie) {
             restartGame();
             updateScreen();
+            isTie = undefined
         }
         if (GameBoard.isFull() && !GameBoard.hasWinner()) {
             isTie = true

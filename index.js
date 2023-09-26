@@ -18,7 +18,6 @@ let GameBoard = (function () {
         _board[row][column] = token;
     }
 
-    //DOM + CONSOLE CHECK
     const placeComputersToken = () => {
         let empty = ' ';
         let [coordinate1, coordinate2] = [Math.floor(Math.random() * 3), Math.floor(Math.random() * 3)];
@@ -89,12 +88,10 @@ let GameController = () => {
 
     let _activePlayer = _players[0];
 
-    //DOMCHECK
     let _switchPlayersTurn = () => {
         _activePlayer = _activePlayer === _players[0] ? _players[1] : _players[0];
     }
 
-    //DOMCHECK
     let getActivePlayer = () => _activePlayer;
 
     let changeOpponent = () => {
@@ -108,15 +105,17 @@ let GameController = () => {
         console.log(`${getActivePlayer().name}'s turn`)
     }
 
-    //CONSOLE ONLY
     let _computerPlaysTurn = () => {
-        _board.placeComputersToken()
-        if (_board.hasWinner()) {
-            _board.consoleLogBoard()
-            return `${getActivePlayer().name} WON`
-        }
-        _switchPlayersTurn();
-        _printNewRound();
+        setTimeout(() => {
+
+            _board.placeComputersToken()
+            if (_board.hasWinner()) {
+                _board.consoleLogBoard()
+                return `${getActivePlayer().name} WON`
+            }
+            _switchPlayersTurn();
+            _printNewRound();
+        }, '1200')
     }
 
     let playRound = (row, column) => {
@@ -134,7 +133,6 @@ let GameController = () => {
         if (getActivePlayer().name === 'CPU') { _computerPlaysTurn() }
     }
 
-    //DOMCHECK
     let restartGame = () => {
         if (getActivePlayer().name !== 'P1') { _switchPlayersTurn() }
         _board.reset()
@@ -184,6 +182,8 @@ let ScreenController = function () {
     const p1ScoreDiv = document.querySelector('.scores .p1_score');
     const opponentScoreDiv = document.querySelector('.scores .opponent_score');
     const restartBtn = document.querySelector('#restartBtn');
+    let allSquares;
+
     let scoreHasBeenAdded;
     let isTie;
 
@@ -199,6 +199,23 @@ let ScreenController = function () {
     function resetScores() {
         p1ScoreDiv.textContent = '0'
         opponentScoreDiv.textContent = '0'
+    }
+
+    function waitForComputersTurn() {
+        if (GameBoard.hasWinner()) { return }
+        //add square.disabled = true; to every square.
+        //then after '2001' ms, square.disabled = false;
+        allSquares.forEach((squareBtn) => {
+            squareBtn.disabled = true;
+        })
+        //after computer plays turn. updates board. enables buttons.
+        setTimeout(() => {
+            updateScreen();
+            allSquares.forEach((squareBtn) => {
+                squareBtn.disabled = false;
+            })
+        }
+            , '1210')
     }
 
     const updateScreen = () => {
@@ -224,6 +241,7 @@ let ScreenController = function () {
                 column += 1
             })
         })
+        allSquares = document.querySelectorAll('.square')
     }
 
     function handleTie() {
@@ -285,10 +303,10 @@ let ScreenController = function () {
         let selectedColumn = e.target.dataset.column;
         game.playRound(selectedRow, selectedColumn)
         updateScreen();
+        if (getActivePlayer().name === 'CPU') { waitForComputersTurn() }
         handleTie()
         if (GameBoard.hasWinner()) { increaseCurrentPlayerScore() }
     }
-
     updateScreen()
     restartBtn.addEventListener('click', restart)
     boardNode.addEventListener('click', clickHandlerBoard);
@@ -297,7 +315,3 @@ let ScreenController = function () {
 
 
 ScreenController();
-
-//DOM
-
-//font color will change depending on if the token is an X or O

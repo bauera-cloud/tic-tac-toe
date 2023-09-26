@@ -120,14 +120,13 @@ let GameController = () => {
     }
 
     let playRound = (row, column) => {
-        //if location on board isn't occupied. place token.
-        if (_board.isLocationOccupied(row, column)) {
-            return
-        }
+        //if location on board is occupied. don't place token.
+        if (_board.isLocationOccupied(row, column)) { return }
         _board.placeToken(getActivePlayer().token, row, column)
+        //after placing the players token, check if they won.
         if (_board.hasWinner()) {
+            //if player won - log winner, exit function
             console.log(`${getActivePlayer().name} WON`)
-            if (getActivePlayer().name !== 'P1') { _switchPlayersTurn() }
             return
         } else if (_board.isFull()) { return 'TIE' }
         _switchPlayersTurn();
@@ -190,7 +189,7 @@ let ScreenController = function () {
 
     const _board = game.getBoard();
 
-    let { restartGame, changeOpponent } = game;
+    let { restartGame, changeOpponent, getActivePlayer } = game;
 
     function restart() {
         restartGame()
@@ -229,9 +228,10 @@ let ScreenController = function () {
     }
 
     function increaseCurrentPlayerScore() {
-        let currentPlayer = game.getActivePlayer().name;
+        let currentPlayer = getActivePlayer().name;
         let p1Score = Number(p1ScoreDiv.textContent)
         let opponentScore = Number(opponentScoreDiv.textContent)
+        console.log(currentPlayer)
         if (GameBoard.hasWinner() && scoreHasBeenAdded) {
             restartGame();
             updateScreen();
@@ -291,4 +291,3 @@ ScreenController();
 //DOM
 
 //font color will change depending on if the token is an X or O
-//get p2 working

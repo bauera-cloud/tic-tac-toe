@@ -97,9 +97,10 @@ let GameController = () => {
     //DOMCHECK
     let getActivePlayer = () => _activePlayer;
 
-    let _changeOpponent = () => {
+    let changeOpponent = () => {
+        let newOpponent = _players[1].name === 'CPU' ? Player('P2', 'O') : Player('CPU', 'O')
         _players.pop()
-        _players.push(opponent)
+        _players.push(newOpponent)
     }
 
     let _printNewRound = () => {
@@ -144,7 +145,7 @@ let GameController = () => {
 
     _printNewRound()
 
-    return { playRound, getActivePlayer, restartGame, getBoard: _board.getBoard }
+    return { playRound, getActivePlayer, restartGame, getBoard: _board.getBoard, changeOpponent }
 }
 
 //alternate X's and O's for values in randomly generated board
@@ -189,7 +190,7 @@ let ScreenController = function () {
 
     const _board = game.getBoard();
 
-    let { restartGame } = game;
+    let { restartGame, changeOpponent } = game;
 
     function restart() {
         restartGame()
@@ -252,9 +253,11 @@ let ScreenController = function () {
         if (e.target.textContent === 'CPU') {
             e.target.textContent = 'P2';
             e.target.nextElementSibling.style.display = 'none'
+            changeOpponent()
         } else if (e.target.textContent === 'P2') {
             e.target.textContent = 'CPU';
             e.target.nextElementSibling.style.display = 'inline'
+            changeOpponent()
         }
         if (e.target.textContent === 'EASY') {
             e.target.textContent = 'MEDIUM';
@@ -263,6 +266,7 @@ let ScreenController = function () {
             e.target.textContent = 'EASY';
             e.target.style.right = '40px';
         }
+        restartGame();
         updateScreen();
     }
 
@@ -287,3 +291,4 @@ ScreenController();
 //DOM
 
 //font color will change depending on if the token is an X or O
+//get p2 working

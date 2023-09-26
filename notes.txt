@@ -18,11 +18,7 @@ add computer ai:
 
 DOM
 
-get computer working
-
 font color will change depending on if the token is an X or O
-get p2 working
-add a point to the winning players score
 
 animation:
     for generating the O

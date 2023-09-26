@@ -115,7 +115,7 @@ let GameController = () => {
             }
             _switchPlayersTurn();
             _printNewRound();
-        }, '1200')
+        }, '900')
     }
 
     let playRound = (row, column) => {
@@ -217,7 +217,7 @@ let ScreenController = function () {
             handleTie()
             if (GameBoard.hasWinner()) { increaseCurrentPlayerScore() }
         }
-            , '1210')
+            , '910')
     }
 
     const updateScreen = () => {
